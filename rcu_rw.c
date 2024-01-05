@@ -83,7 +83,20 @@ static int __init rcu_rw_init(void)
 
 static void __exit rcu_rw_exit(void)
 {
-	
+	if (writer_thread)
+		kthread_stop(writer_thread);
+
+	if (reader_thread)
+		ktrhead_stop(reader_thread);
+
+	/*
+	 * 在RCU读侧临界区访问到了global_ptr
+	 * 在模块退出时, 以确保在释放 global_ptr 之前, 所有相关的 RCU 读操作都已经安全地完成
+	 */
+	synchronize_rcu();
+
+	if (global_ptr)
+		kfree(global_ptr);	
 }
 
 module_init(my_module_init);
