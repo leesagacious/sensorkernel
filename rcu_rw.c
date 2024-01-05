@@ -26,8 +26,12 @@ static int writer_thread_function(void *data)
 		if (!new_data)
 			break;
 
-		new_data->a = value;
+		new_data->a = value;  // 在副本上修改
 
+		/*
+		 * 修改完成后, 更新全局指针，使其指向新修改的副本。
+		 * 这个宏保证了指针更新操作的正确性，特别是在多核处理器环境中
+		 */
 		rcu_assign_pointer(global_ptr, new_data);
 	}
 
