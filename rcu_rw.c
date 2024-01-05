@@ -28,6 +28,8 @@ static int writer_thread_function(void *data)
 
 	while (!kthread_should_stop()) {
 		
+		schedule_timeout_interruptible(HZ);
+		
 		new_data = kmalloc(sizeof(struct my_data), GFP_KERNEL);
 		if (!new_data)
 			break;
@@ -48,8 +50,6 @@ static int writer_thread_function(void *data)
 			call_rcu(&global_ptr->rcu, my_data_free);
 
 		value++;
-
-		schedule_timeout_interruptible(HZ);
 	}
 
 	return 0;
@@ -80,7 +80,7 @@ static int __init rcu_rw_init(void)
 	if (IS_ERR(writer_thread))
 		return PTR_ERR(writer_thread);
 
-	reader_thread = kthread_run(writer_thread_function, NULL, "reader_thread");
+	reader_thread = kthread_run(reader_thread_function, NULL, "reader_thread");
 	if (IS_ERR(reader_thread))
 		return PTR_ERR(reader_thread);
 
@@ -105,8 +105,8 @@ static void __exit rcu_rw_exit(void)
 		kfree(global_ptr);	
 }
 
-module_init(my_module_init);
-module_exit(my_module_exit);
+module_init(rcu_rw_init);
+module_exit(rcu_rw_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("lizhe");
