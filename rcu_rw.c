@@ -53,6 +53,13 @@ static int writer_thread_function(void *data)
 
 static int __init rcu_rw_init(void)
 {
+	writer_thread = kthread_run(writer_thread_function, NULL, "writer_thread");
+	if (IS_ERR(writer_thread))
+		return PTR_ERR(writer_thread);
+
+	reader_thread = kthread_run(writer_thread_function, NULL, "reader_thread");
+	if (IS_ERR(reader_thread))
+		return PTR_ERR(reader_thread);
 
 	return 0;
 }
