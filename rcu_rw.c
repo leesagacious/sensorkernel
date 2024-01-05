@@ -51,6 +51,23 @@ static int writer_thread_function(void *data)
 	return 0;
 }
 
+static int reader_thread_function(void *data)
+{
+	struct my_data *my_data_ptr;
+
+	while (!kthread_should_stop()) {
+		rcu_read_lock();
+		
+		my_data_ptr = rcu_dereference(global_ptr);
+		if (my_data_ptr)
+			printk(KERN_INFO "read data : %d\n", my_data->a);
+
+		rcu_read_unlock();
+	}
+
+	return 0;
+}
+
 static int __init rcu_rw_init(void)
 {
 	writer_thread = kthread_run(writer_thread_function, NULL, "writer_thread");
