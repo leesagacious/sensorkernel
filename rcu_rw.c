@@ -46,6 +46,10 @@ static int writer_thread_function(void *data)
 		 */
 		if (global_ptr)
 			call_rcu(&global_ptr->rcu, my_data_free);
+
+		value++;
+
+		schedule_timeout_interruptible(HZ);
 	}
 
 	return 0;
@@ -60,9 +64,11 @@ static int reader_thread_function(void *data)
 		
 		my_data_ptr = rcu_dereference(global_ptr);
 		if (my_data_ptr)
-			printk(KERN_INFO "read data : %d\n", my_data->a);
+			printk(KERN_INFO "read data : %d\n", my_data_ptr->a);
 
 		rcu_read_unlock();
+
+		msleep(500);
 	}
 
 	return 0;
