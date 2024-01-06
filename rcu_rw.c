@@ -76,6 +76,8 @@ static int reader_thread_function(void *data)
 
 static int __init rcu_rw_init(void)
 {
+	global_ptr = kzalloc(sizeof(struct my_data), GFP_KERNEL);
+
 	writer_thread = kthread_run(writer_thread_function, NULL, "writer_thread");
 	if (IS_ERR(writer_thread))
 		return PTR_ERR(writer_thread);
