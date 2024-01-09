@@ -83,8 +83,11 @@ static int __init rcu_rw_init(void)
 		return PTR_ERR(writer_thread);
 
 	reader_thread = kthread_run(reader_thread_function, NULL, "reader_thread");
-	if (IS_ERR(reader_thread))
+	if (IS_ERR(reader_thread)) {
+		kthread_stop(writer_thread);
+		kfree(global_ptr);
 		return PTR_ERR(reader_thread);
+	}
 
 	return 0;
 }
