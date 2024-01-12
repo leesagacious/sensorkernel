@@ -5,7 +5,7 @@ prog = """
 
 BPF_PERF_OUTPUT(monitor_alarm);
 
-int alarm_monitor_entrace(struct pt_regs *ctx) 
+int alarm_monitor_entrace(struct pt_regs *ctx, int arg1, int arg2) 
 {
 
     return 0;
@@ -19,8 +19,11 @@ int alarm_monitor_ret(struct pt_regs *ctx)
 """
 
 b = BPF(test=prog)
-b.attach_kprobe(event=b.get_syscall_fnname("alarm"), fn_name="alarm_monitor_entrace")
-b.attach_kretprobe(event=b.get_syscall_fname("alarm"), fn_name="alarm_monitor_ret")
+b.attach_kprobe(event=b.get_syscall_fnname("my_alarm"), fn_name="my_alarm_monitor_entrace")
+b.attach_kretprobe(event=b.get_syscall_fname("my_alarm"), fn_name="my_alarm_monitor_ret")
+
+def print_alarm(cpu, data, size):
+    monitor_alarm = b["monitor_alarm"].event(data)
 
 
 b["monitor_alarm"].open_perf_buffer(print_alarm)
