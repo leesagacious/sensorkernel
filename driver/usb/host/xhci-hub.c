@@ -5,11 +5,11 @@ int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 	status = bus_state->resuming_ports;
 
 	for (i = 0; i < max_ports; i++) {
-		temp = readl(ports[i]->addr);
+		temp = readl(ports[i]->addr);   // 读取每一个端口状态和控制寄存器. (portsc)
 
 		if (temp & PORT_RC)
 			reset_change = true;
-		if (temp & PORT_OC)
+		if (temp & PORT_OC)		// 过流
 			status = 1;
 	}
 
