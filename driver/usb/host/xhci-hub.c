@@ -1,5 +1,17 @@
 int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 {
+	u32 status;
+
+	status = bus_state->resuming_ports;
+
+	for (i = 0; i < max_ports; i++) {
+		temp = readl(ports[i]->addr);
+
+		if (temp & PORT_RC)
+			reset_change = true;
+		if (temp & PORT_OC)
+			status = 1;
+	}
 
 	/*
 	 * 端口没有状态. 定时器停止轮询该port. 
