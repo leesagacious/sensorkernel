@@ -1,6 +1,12 @@
 int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 {
 	u32 status;
+	int max_prots;
+	struct xhci_hub *rhub;
+
+
+	rhub = xhci_get_rhub(hcd);
+	max_prots = rhub->ports;		// hub上端口的数量
 
 	status = bus_state->resuming_ports;
 
