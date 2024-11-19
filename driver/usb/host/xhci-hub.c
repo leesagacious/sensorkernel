@@ -15,6 +15,11 @@ int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 
 	for (i = 0; i < max_ports; i++) {
 		temp = readl(ports[i]->addr);   // 读取每一个端口状态和控制寄存器. (portsc)
+		if (temp == ~(u32)0) {
+			xhci_hc_died(xhci);
+			retval = -ENODEV;
+			break;
+		}
 
 		if (temp & PORT_RC)
 			reset_change = true;
