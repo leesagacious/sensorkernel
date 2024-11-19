@@ -9,6 +9,8 @@ int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 	rhub = xhci_get_rhub(hcd);
 	max_prots = rhub->ports;		// hub上端口的数量
 
+	memset(buf, 0, retval);
+
 	spin_lock_irqsave(&xhci->lock, flags);
 
 	status = bus_state->resuming_ports;
@@ -19,6 +21,11 @@ int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 			xhci_hc_died(xhci);
 			retval = -ENODEV;
 			break;
+		}
+
+		if (temp & mask) {
+			buf[(i + 1) / 8] |= 1 << (i + 1) % 8;
+			status = 1;
 		}
 
 		if (temp & PORT_RC)
