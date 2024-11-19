@@ -1,5 +1,6 @@
 int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 {
+	unsigned long flags;
 	u32 status;
 	int max_prots;
 	struct xhci_hub *rhub;
@@ -7,6 +8,8 @@ int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 
 	rhub = xhci_get_rhub(hcd);
 	max_prots = rhub->ports;		// hub上端口的数量
+
+	spin_lock_irqsave(&xhci->lock, flags);
 
 	status = bus_state->resuming_ports;
 
@@ -27,6 +30,6 @@ int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 				__func__, hcd->self.busnum);
 		clear_bit(HCD_FLAG_POLL_RH, &hcd->flags);
 	}
-
+	spin_unlock_irqrestore(&xhci->lock, flags);
 	return status ? retval : 0;
 }
