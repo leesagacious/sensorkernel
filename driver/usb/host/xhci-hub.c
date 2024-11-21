@@ -24,6 +24,8 @@ int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 			retval = -ENODEV;
 			break;
 		}
+		
+		trace_xhci_hub_status_data(i, temp);
 
 		if (temp & mask) {
 			buf[(i + 1) / 8] |= 1 << (i + 1) % 8;
