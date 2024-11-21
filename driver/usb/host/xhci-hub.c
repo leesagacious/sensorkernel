@@ -1,3 +1,12 @@
+struct xhci_hub *xhci_get_rhub(struct usb_hcd *hcd)
+{
+	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
+
+	if (hcd->speed >= HCD_USB3)
+		return &xhci->usb3_rhub;
+	return &xhci->usb2_rhub;
+}
+
 int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
 {
 	unsigned long flags;
