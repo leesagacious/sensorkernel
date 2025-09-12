@@ -29,3 +29,48 @@ static int brcm_pcie_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 
 	return 0;
 }
+
+static int __init brcmfmac_module_init(void)
+{
+	int err;
+
+       /*
+	* this is a multi-bus registration entry function. which internally
+	* registers the corresponding driver based on different interface by 
+	* types.
+	* brcmf_core_init()
+	* 	---> brcmf_sdio_register()	registger sdio interface driver
+	* 	---> brcmf_usb_register()	register usb interface driver
+	* 	---> brcmf_pcie_register()	register pcie interface driver
+	*
+	* Dynamic Adaptation process:
+	* 	when the module is loaded. the system detects the actual hardware
+	* 	interface type.
+	* 	the kernel's device-driver matching mechanism automatically selects
+	* 	the appropriate driver
+	*
+	* detection of a PCIe wifi chip -> triggers the driver registered by brcmf_pcie_register()
+	* detection of a USB wifi adapter -> triggers the driver registered by brcmf_usb_register()
+	* detection of an SDIO interface chip -> triggers the driver register by brcmf_sdio_register()
+	*
+	* encapsulate hardware differences through the unified entry point brcmf_core_init()
+	* driver developers only need to maintain a single initialization path
+	*
+	* automatic interface detection:
+	* 	leverage the kernel's driver_register() mechanism to automatically match hardware 
+	* 	IDs defined in MODULE_DEVICE_TABLE
+	*
+	* ---
+	*    baseed on the actual hardware interface type. the corresponding bus driver is dynamically
+	*    registered, it embodies the "write once, adapt to multiple buses" principle in the linux
+	*    kerenl device driver model
+	*/
+	err = brcmf_core_init();
+	if (err) {
+		if (brcmfmac_pdata)
+			platform_driver_unregister(&brcmf_pd);
+	}
+
+
+	return err;
+}
