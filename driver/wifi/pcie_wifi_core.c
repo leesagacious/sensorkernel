@@ -4,6 +4,13 @@ struct brcmf_pciedev_info {
 	struct pci_dev *pdev;
 };
 
+static struct platform_driver brcmf_pd = {
+	.remove = brcmf_common_pd_remove,
+	.driver = {
+		.name = BRCMFMAC_PDATA_NAME,
+	}
+};
+
 static int brcm_pcie_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 {
 	int ret;
@@ -33,6 +40,14 @@ static int brcm_pcie_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 static int __init brcmfmac_module_init(void)
 {
 	int err;
+
+	/*
+	 * register the platform driver with the name brcmfmac
+	 */
+	err = platform_driver_probe(&brcmf_pd, brcmf_common_pd_probe);
+	if (err == -ENODEV)
+		brcmf_dbg(INFO, "No platform data available. \n");
+
 
        /*
 	* this is a multi-bus registration entry function. which internally
