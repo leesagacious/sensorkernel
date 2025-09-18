@@ -42,5 +42,16 @@ int brcmf_chip_get_raminfo(struct brcmf_chip *pub)
 	 */
 	struct brcmf_core *mem;
 
+ 	/*
+	 * 1. identifies the ARM CR4 core, retrieves register base address/version info.
+	 * 2. supplies essential data for firmware loading and processor boot
+	 */	
+	mem = brcmf_chip_get_core(&ci->pub, BCMA_CORE_ARM_CR4);
+	if (mem) {
+	
+	} else {
+	
+	}
+
 
 }
