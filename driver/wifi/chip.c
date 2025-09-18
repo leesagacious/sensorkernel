@@ -22,4 +22,18 @@ int brcmf_chip_get_raminfo(struct brcmf_chip *pub)
 	 */
 	struct brcmf_chip_priv *ci = container_of(pub, struct brcmf_chip_priv,
 				pub);
+	
+	/*
+	 * Chip core's private internal structure
+	 * for managing the states and configurations of all functional 
+	 * cores inside the chip
+	 *
+	 * typical cores:
+	 * 	1. chipcommon core   :Control and base config
+	 * 	2. PCIe core	     :Manages PCIe interface communication
+	 * 	3. Arm CR4 core      :Main processor core
+	 * 	4. 802.11ax MAC Core :Hardware implementation of the WI-FI6 protocol stack
+	 * 	5. ......
+	 */
+	struct brcmf_core_priv *mem_core;
 }
