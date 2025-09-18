@@ -36,4 +36,11 @@ int brcmf_chip_get_raminfo(struct brcmf_chip *pub)
 	 * 	5. ......
 	 */
 	struct brcmf_core_priv *mem_core;
+
+	/*
+	 * For identifying and locating internal functional blocks of the chip
+	 */
+	struct brcmf_core *mem;
+
+
 }
