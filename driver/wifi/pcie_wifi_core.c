@@ -28,6 +28,16 @@ static int brcm_pcie_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 		return ret;
 
 	/*
+	 * Search for the core with the identifier BCMA_CORE_PCIE2 within the chip information
+	 * structure devinfo->ci
+	 */
+	core = brcmf_chip_get_core(devinfo->ci, BCMA_CORE_PCIE2);
+	if (core->rev >= 64)
+		devinfo->reginfo = &brcmf_reginfo_64;
+	else
+		devinfo->reginfo = &brcmf_reginfo_default;
+
+	/*
 	 * populate the pci_dev structre maintained by it
 	 */
 	devinfo->pdev = pdev;
