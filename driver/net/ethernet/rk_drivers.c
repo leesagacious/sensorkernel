@@ -1,4 +1,22 @@
 
+/*
+ * Set the clock divider ratio of the GMAC based on the
+ * configured network speed
+ */
+static void rk3588_set_gmac_speed(struct rk_priv_data *bsp_priv, int speed)
+{
+	struct device *dev = &bsp_priv->pdev->dev;
+	unsigned int val = 0, id = bsp_priv->id;
+
+	switch (speed) {
+	case 10:
+	case 100:
+	case 1000:
+	default:
+		goto err;
+	}
+}
+
 static struct rk_priv_data *rk_gamc_setup(struct platform_device *pdev,
 		struct plat_stmmacenet_data *plat,
 		const struct rk_gmac_ops *ops)
