@@ -1,4 +1,29 @@
 
+static struct rk_priv_data *rk_gamc_setup(struct platform_device *pdev,
+		struct plat_stmmacenet_data *plat,
+		const struct rk_gmac_ops *ops)
+{
+	struct resource *res;
+
+	/*
+	 * Obtain the base address of the GMAC and compare it with the 
+	 * one defined in the code to determine whether it is GMAC0 or
+	 * GMAC1
+	 */
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	if (res && ops->regs_valid) {
+		int i = 0;
+
+		while (ops->regs[i]) {
+			if (ops->regs[i] == res->start) {
+				bsp_priv->id = i;
+				break;
+			}
+			i++;
+		}
+	}
+}	
+
 static int rk_gmac_probe(struct platform_device *pdev)
 {
 	struct plat_stmmacenet_data *plat_dat;
