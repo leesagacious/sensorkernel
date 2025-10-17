@@ -57,6 +57,13 @@ static int rk_gmac_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "no of match data provided\n");
 		return -EINVAL;
 	}
+
+	/*
+	 * get the irq resources
+	 */
+	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
+	if (ret)
+		return ret;
 }
 
 /*
