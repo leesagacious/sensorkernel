@@ -1,4 +1,24 @@
 
+/*
+ * Return the TCM RAM base address for a specific Broadcom WI-FI chip.
+ * TCM is a type of high-speed. low-latency memory commonly used to
+ * store critical code and data to enhance processing efficiency
+ */
+static u32 brcmf_chip_tcm_rambase(struct brcmf_chip_priv *ci)
+{
+	/*
+	 * Identify the specific Broadcom chip model via ci->pub.chip
+	 */
+	switch (ci->pub.chip) {
+	case BRCM_CC_43666_CHIP_ID:
+		return 0x200000;	// base rambase
+	default:
+		brcmf_err("unknown chip: %s\n", ci->pub.name);
+		break;
+	};
+	return 0;
+}
+
 int brcmf_chip_get_raminfo(struct brcmf_chip *pub)
 {
 	/*
