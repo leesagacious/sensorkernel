@@ -14,6 +14,10 @@
  * 	1. NL80211_CQM_RSSI_THRESHOLD_EVENT_LOW    	Signal strength is below the configured threshold
  * 	2. NL80211_CQM_RSSI_THRESHOLD_EVENT_HIGH	Signal strength is above the configured threshold
  * 	3. NL80211_CQM_RSSI_BEACON_LOSS_EVENT		Reserved value, never actually sent
+ * rssi_level:
+ * 	current RSSI value
+ * gfp:
+ * 	memory allocation flags
  */
 void cfg80211_cqm_rssi_notify(struct net_device *dev,
 		enum nl80211_cqm_rssi_threshold_event rssi_event,
