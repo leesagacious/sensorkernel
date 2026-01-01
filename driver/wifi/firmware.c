@@ -1,4 +1,13 @@
 
+int brcmf_fw_get_firmware(struct device *dev, struct brcmf_fw_request *req,
+		void (*fw_cb)(struct device *dev, int err,
+			struct brcmf_fw_request *req))
+{
+	int ret;
+
+	return 0;
+}	
+
 /*
  * Specifically traverse and filter NVRAM data entries related to 
  * PCIe configurations
