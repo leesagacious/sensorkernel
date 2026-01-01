@@ -1,9 +1,18 @@
 
+
+/*
+ * Firmware is loaded from disk using an asynchronous.
+ */
 int brcmf_fw_get_firmware(struct device *dev, struct brcmf_fw_request *req,
 		void (*fw_cb)(struct device *dev, int err,
 			struct brcmf_fw_request *req))
 {
 	int ret;
+
+	/* asynchronous version of request_firmware */
+	ret = request_firmware_nowait(THIS_MODULE, true, first->path,
+			fwctx->dev, GFP_KERNEL, fwctx,
+			brcmf_fw_request_done);
 
 	return 0;
 }	
