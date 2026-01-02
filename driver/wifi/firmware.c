@@ -1,4 +1,20 @@
+/*
+ * The request contains firmware items: n_items > 0
+ * Each firmware item has a path: item->path != NULL
+ */
+static bool brcmf_fw_request_is_valid(struct brcmf_fw_request *req)
+{
+	struct brcmf_fw_item *item;
+	int i;
 
+	if (!req->n_items)
+		return false;
+
+	for (i = 0, item = &req->items[0]; i < req->n_items; i++, item++) {
+		if (!item->path)
+			return false;
+	}
+}
 
 /*
  * Firmware is loaded from disk using an asynchronous.
@@ -12,6 +28,10 @@ int brcmf_fw_get_firmware(struct device *dev, struct brcmf_fw_request *req,
 	brcmf_dbg(TRACE, "enter: dev=%s\n", dev_name(dev));	// add debug code
 	if (!fw_cb)						// check invoke. 
 		return -EINVAL;					// Notify the driver when firmware loading is complete
+	
+	/* check the request item */
+	if (!brcmf_fw_request_is_valid(req))
+		return -EINVAL;
 
 	/* asynchronous version of request_firmware */
 	ret = request_firmware_nowait(THIS_MODULE, true, first->path,
