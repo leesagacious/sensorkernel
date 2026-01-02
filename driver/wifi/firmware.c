@@ -33,6 +33,19 @@ int brcmf_fw_get_firmware(struct device *dev, struct brcmf_fw_request *req,
 	if (!brcmf_fw_request_is_valid(req))
 		return -EINVAL;
 
+	/*
+	 * allocate and initizalize a context structure for asynchronous
+	 * operation to store device information,firmware request details
+	 * and callback function
+	 */
+	fwctx = kzalloc(sizeof(*fwctx), GFP_KERNEL);
+	if (!fwctx)
+		return -ENOMEM;
+
+	fwctx->dev = dev;
+	fwctx->req = req;
+	fwctx->done = fw_cb;
+
 	/* asynchronous version of request_firmware */
 	ret = request_firmware_nowait(THIS_MODULE, true, first->path,
 			fwctx->dev, GFP_KERNEL, fwctx,
