@@ -51,6 +51,9 @@ int brcmf_fw_get_firmware(struct device *dev, struct brcmf_fw_request *req,
 			fwctx->dev, GFP_KERNEL, fwctx,
 			brcmf_fw_request_done);
 
+	if (ret < 0)
+		brcmf_fw_request_done(NULL, fwctx);
+
 	return 0;
 }	
 
