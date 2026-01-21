@@ -10,6 +10,9 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
 	 * when queued is 0, it indicates a normal perodic clock interrupt
 	 */
 	if (queued) {
+		/*
+		 * Rescheduling flag for processes running on this cpu core
+		 */
 		resched_curr(rq_of(cfs_rq));
 		return;
 	}
