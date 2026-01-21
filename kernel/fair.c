@@ -8,6 +8,12 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
 	 * queued and triggerred by a high-resolution timer(hrtick)
 	 *
 	 * when queued is 0, it indicates a normal perodic clock interrupt
+	 *
+	 * Because the entity_tick function needs to know:
+	 * 	- who is calling me ? is it the periodic tick or the HRTICK ?
+	 * 	- what behavior should i take ?
+	 * 	- if it's HRTICK: reschedule immediately (as the time slice has precisely expired)
+	 * 	- if it's the periodic tick: first check whether HRTICK is active to avoid interference
 	 */
 	if (queued) {
 		/*
