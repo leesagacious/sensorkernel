@@ -22,6 +22,32 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
 		resched_curr(rq_of(cfs_rq));
 		return;
 	}
+
+	/*
+	 * Return directly when both of the following conditions are met:
+	 * - The DOUBLE_TICK feature is not enabled
+	 * - The HRTICK timer is already running
+	 *
+	 *  when the DOUBLE_TICK feature is enabled. coexistence of both is allowed
+	 *  by default. this feature is disabled, as the "double check" provides no 
+	 *  benefit in most cases
+	 *
+	 *  Timeline example:
+		  Periodic tick    HRTICK
+    			↓           ↓
+ 		 [---|--------------|-----] Time axis
+   		    t=10ms     t=15ms (exact end of time slice)
+
+	  If both triggers are allowed to invoke scheduling checks:
+	  1. At t=10ms, the periodic tick triggers check_preempt_tick().
+	  2. The task may continue running because its time slice hasn’t been exhausted yet.
+	  3. At t=15ms, HRTICK triggers another precise scheduling check.
+	  4. In effect, the check at t=10ms is "premature and unnecessary."
+
+	 */
+	if (!sched_feat(DOUBLE_TICK) &&
+			hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+		return;
 #endif	
 	/*
 	 * This means that check_preempt_tick() is invoked to check whether
